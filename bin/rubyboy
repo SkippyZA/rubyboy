@@ -2,4 +2,11 @@
 require 'bundler/setup'
 require 'rubyboy'
 
-Rubyboy::Emulator.run('')
+rom = ARGV[0]
+
+if rom.nil?
+  puts 'No rom supplied as parameter when starting Rubyboy emulator'
+  exit
+end
+
+Rubyboy::Emulator.run(rom)

@@ -1,4 +1,5 @@
 require "rubyboy/version"
+require "rubyboy/cartridge"
 require "rubyboy/emulator"
 require "rubyboy/cpu"
 require "rubyboy/mmu"
