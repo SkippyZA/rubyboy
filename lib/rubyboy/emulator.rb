@@ -6,8 +6,8 @@ module Rubyboy
       rom = IO.binread(rom).bytes
 
       @cartridge = Cartridge.new rom
-      @mmu = MMU.new
-      @cpu = CPU.new
+      @mmu = MMU.new rom
+      @cpu = CPU.new @mmu
     end
   end
 end

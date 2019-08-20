@@ -27,7 +27,7 @@ module Rubyboy
         [ 'INC BC', 0, 8 ],
         [ 'INC B', 0, 4 ],
         [ 'DEC B', 0, 4 ],
-        [ 'LD B, 0x%02X', 1, 8 ],
+        [ 'LD B, 0x%02X', 1, 8, :ld_b_d8 ],
         [ 'RLCA', 0, 4 ],
         [ 'LD (0x%04X), SP', 2, 20 ],
         [ 'ADD HL, BC', 0, 8 ],
@@ -35,7 +35,7 @@ module Rubyboy
         [ 'DEC BC', 0, 8 ],
         [ 'INC C', 0, 4 ],
         [ 'DEC C', 0, 4 ],
-        [ 'LD C, 0x%02X', 1, 8 ],
+        [ 'LD C, 0x%02X', 1, 8, :ld_c_d8 ],
         [ 'RRCA', 0, 4 ],
 
         # 0x10
@@ -45,7 +45,7 @@ module Rubyboy
         [ 'INC DE', 0, 8 ],
         [ 'INC D', 0, 4 ],
         [ 'DEC D', 0, 4 ],
-        [ 'LD D, 0x%02X', 1, 8 ],
+        [ 'LD D, 0x%02X', 1, 8, :ld_d_d8 ],
         [ 'RLA', 0, 4 ],
         [ 'JR 0x%02X', 1, 12 ],
         [ 'ADD HL, DE', 0, 8 ],
@@ -53,7 +53,7 @@ module Rubyboy
         [ 'DEC DE', 0, 8 ],
         [ 'INC E', 0, 4 ],
         [ 'DEC E', 0, 4 ],
-        [ 'LD E, 0x%02X', 1, 8 ],
+        [ 'LD E, 0x%02X', 1, 8, :ld_e_d8 ],
         [ 'RRA', 0, 4 ],
 
         # 0x20
@@ -63,7 +63,7 @@ module Rubyboy
         [ 'INC HL', 0, 8 ],
         [ 'INC H', 0, 4 ],
         [ 'DEC H', 0, 4 ],
-        [ 'LD H, 0x%02X', 1, 8 ],
+        [ 'LD H, 0x%02X', 1, 8, :ld_h_d8 ],
         [ 'DAA', 0, 4, 4 ],
         [ 'JR Z, 0x%02X', 1, [ 8, 12 ] ],
         [ 'ADD HL, HL', 0, 8 ],
@@ -71,7 +71,7 @@ module Rubyboy
         [ 'DEC HL', 0, 8 ],
         [ 'INC L', 0, 4 ],
         [ 'DEC L', 0, 4 ],
-        [ 'LD L, 0x%02X', 1, 8 ],
+        [ 'LD L, 0x%02X', 1, 8, :ld_l_d8 ],
         [ 'CPL', 0, 4 ],
 
         # 0x30
