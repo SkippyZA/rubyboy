@@ -1,4 +1,5 @@
 require "rubyboy/instructions/registers"
+require "rubyboy/instructions/opcodes"
 
 module Rubyboy
   Z_FLAG = 0b1000_0000 # Zero flag
@@ -8,6 +9,7 @@ module Rubyboy
 
   class CPU
     include Instructions::Registers
+    include Instructions::Opcodes
 
     attr_reader :a, :b, :c, :d, :e, :f, :h, :l
     attr_reader :pc

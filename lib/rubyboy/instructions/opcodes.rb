@@ -2,13 +2,20 @@ module Rubyboy
   module Instructions
     module Opcodes
       class Instruction
-        attr_reader :disassembly, :opperand_length, :cpu_cycles, :execute
+        attr_reader :disassembly, :opperand_length, :cpu_cycles, :conditional_cpu_cycles, :execute
 
-        def initialize(disassembly, opperand_length, cpu_cycles execute)
+        def initialize(disassembly, opperand_length, cpu_cycles, execute)
           @disassembly = disassembly
           @opperand_length = opperand_length
-          @cpu_cycles = cpu_cycles
           @execute = execute
+
+          if cpu_cycles.is_a?(Array)
+            @cpu_cycles = cpu_cycles[0]
+            @conditional_cpu_cycles = cpu_cycles[1]
+          else
+            @cpu_cycles = cpu_cycles
+            @conditional_cpu_cycles = nil
+          end
         end
       end
 
@@ -58,7 +65,7 @@ module Rubyboy
         [ 'DEC H', 0, 4 ],
         [ 'LD H, 0x%02X', 1, 8 ],
         [ 'DAA', 0, 4, 4 ],
-        [ 'JR Z, 0x%02X', 1, 12 ], # or cpu_cycle = 8
+        [ 'JR Z, 0x%02X', 1, [ 8, 12 ] ],
         [ 'ADD HL, HL', 0, 8 ],
         [ 'LDI A, (HL)', 0, 8 ],
         [ 'DEC HL', 0, 8 ],
@@ -68,7 +75,7 @@ module Rubyboy
         [ 'CPL', 0, 4 ],
 
         # 0x30
-        [ 'JR NC, 0x%02X', 1, 12 ], # or cpu_cycles = 8
+        [ 'JR NC, 0x%02X', 1, [ 8, 12 ] ],
         [ 'LD SP, 0x%04X', 2, 12 ],
         [ 'LDD (HL), A', 0, 8 ],
         [ 'INC SP', 0, 8 ],
@@ -76,7 +83,7 @@ module Rubyboy
         [ 'DEC (HL)', 0, 12 ],
         [ 'LD (HL), 0x%02X', 1, 12 ],
         [ 'SCF', 0, 4 ],
-        [ 'JR C, 0x%02X', 1, 12 ], # or cpu_cycles = 8
+        [ 'JR C, 0x%02X', 1, [ 8, 12 ] ],
         [ 'ADD HL, SP', 0, 8 ],
         [ 'LDD A, (HL)', 0, 8 ],
         [ 'DEC SP', 0, 8 ],
@@ -230,37 +237,37 @@ module Rubyboy
         [ 'CP A', 0, 4 ],
 
         # 0xC0
-        [ 'RET NZ', 0, 20, 20 ], # or cpu_cycles = 8
+        [ 'RET NZ', 0, 20, [ 8, 20 ] ],
         [ 'POP BC', 0, 12 ],
-        [ 'JP NZ, 0x%04X', 2, 16 ], # or cpu_cycles = 8
+        [ 'JP NZ, 0x%04X', 2, [ 8, 16 ] ],
         [ 'JP 0x%04X', 2, 16 ],
-        [ 'CALL NZ, 0x%04X', 2, 24 ], # or cpu_cycles = 8
+        [ 'CALL NZ, 0x%04X', 2, [ 8, 24 ] ],
         [ 'PUSH BC', 0, 16 ],
         [ 'ADD A, 0x%02X', 1, 8 ],
         [ 'RST 0x00', 0, 16 ],
-        [ 'RET Z', 0, 20 ], # or cpu_cycles = 8
+        [ 'RET Z', 0, [ 8, 20 ] ],
         [ 'RET', 0, 16 ],
-        [ 'JP Z, 0x%04X', 2, 16 ], # or cpu_cycles = 8
+        [ 'JP Z, 0x%04X', 2, [ 8, 16 ] ],
         [ 'CB %02X', 1, 4 ],
-        [ 'CALL Z, 0x%04X', 2, 24 ], # or cpu_cycles = 8
+        [ 'CALL Z, 0x%04X', 2, [ 8, 24 ] ],
         [ 'CALL 0x%04X', 2, 24 ],
         [ 'ADC 0x%02X', 1, 8 ],
         [ 'RST 0x08', 0, 16 ],
 
         # 0xD0
-        [ 'RET NC', 0, 20 ], # or cpu_cycles = 8
+        [ 'RET NC', 0, [ 8, 20 ] ],
         [ 'POP DE', 0, 12 ],
-        [ 'JP NC, 0x%04X', 2, 16 ], # or cpu_cycles = 12
+        [ 'JP NC, 0x%04X', 2, [ 12, 16 ] ],
         [ 'UNKNOWN', 0, 0 ],
-        [ 'CALL NC, 0x%04X', 2, 24 ], # or cpu_cycles = 12
+        [ 'CALL NC, 0x%04X', 2, [ 12, 24 ] ],
         [ 'PUSH DE', 0, 16 ],
         [ 'SUB 0x%02X', 1, 8 ],
         [ 'RST 0x10', 0, 16 ],
-        [ 'RET C', 0, 20 ], # or cpu_cycles = 8
+        [ 'RET C', 0, [ 20, 8 ] ],
         [ 'RETI', 0, 16 ],
-        [ 'JP C, 0x%04X', 2, 16 ], # or cpu_cycles = 12
+        [ 'JP C, 0x%04X', 2, [ 12, 16 ] ],
         [ 'UNKNOWN', 0, 0 ],
-        [ 'CALL C, 0x%04X', 2, 24 ], # or cpu_cycles = 12
+        [ 'CALL C, 0x%04X', 2, [ 12, 24 ] ],
         [ 'UNKNOWN', 0 ],
         [ 'SBC 0x%02X', 1, 8 ],
         [ 'RST 0x18', 0, 16 ],
@@ -300,7 +307,7 @@ module Rubyboy
         [ 'UNKNOWN', 0, 0 ],
         [ 'CP 0x%02X', 1, 8 ],
         [ 'RST 0x38', 0, 16 ]
-      ].map { |o| Instruction.new o[0], o[1], o[2], o[3] }
+      ].map { |o| Instruction.new o[0], o[1], o[2], o[3] }.freeze
     end
   end
 end
