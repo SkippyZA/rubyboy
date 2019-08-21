@@ -25,10 +25,6 @@ module Rubyboy
         @mmu.write_short hl, value
       end
 
-      def load_a_n(n)
-
-      end
-
       def ld_a_n() load_nn_n(:a) end
       def ld_b_n() load_nn_n(:b) end
       def ld_c_n() load_nn_n(:c) end
