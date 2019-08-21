@@ -21,7 +21,10 @@ module Rubyboy
     end
 
     def [](address)
-      if address <= 0x7FFF || ( address >= 0xA000 && address <= 0xBFFF )
+      case address
+      when 0x0000..0x7FFF
+        @cartridge[address]
+      when 0xA000..0xBFFF
         @cartridge[address]
       else
         @memory[address]
@@ -29,7 +32,14 @@ module Rubyboy
     end
 
     def []=(address, value)
-      @memory[address] = value
+      case address
+      when 0x0000..0x7FFF
+        @cartridge[address] = value
+      when 0xA000..0xBFFF
+        @cartridge[address] = value
+      else
+        @memory[address] = value
+      end
     end
 
     def read_short(address)
