@@ -70,8 +70,24 @@ module Rubyboy
         @f &= C_FLAG ^ 0xFF
       end
 
+      def set_program_counter (value)
+        @pc = value
+      end
+
+      def get_register (register)
+        if instance_variable_defined? "@#{register}"
+          instance_variable_get "@#{register.to_sym}"
+        elsif self.respond_to? "#{register}"
+          self.send "#{register}"
+        end
+      end
+
       def set_register (register, value)
-        instance_variable_set "@#{register.to_sym}", value
+        if instance_variable_defined? "@#{register}"
+          instance_variable_set "@#{register.to_sym}", value
+        elsif self.respond_to? "#{register}="
+          self.send "#{register}=", value
+        end
       end
     end
   end

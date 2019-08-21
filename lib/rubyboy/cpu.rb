@@ -26,8 +26,6 @@ module Rubyboy
       @sp = 0x0000
 
       @mmu = mmu
-
-      self.public_send OPCODE[0x06].execute
     end
   end
 end
