@@ -11,13 +11,13 @@ module Rubyboy
       end
 
       def load_n_hl(n)
-        value = @mmu.read_short self.hl
+        value = @mmu.read_short hl
         set_register n, value
       end
 
       def load_hl_n(n)
         value = get_register n
-        @mmu.write_short self.hl, value
+        @mmu.write_short hl, value
       end
 
       def load_r1_r2(register1, register2)

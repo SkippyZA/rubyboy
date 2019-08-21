@@ -1,4 +1,4 @@
-describe Rubyboy::CPU do
+describe Rubyboy::Instructions::Registers do
   before(:each) do
     @mmu = Rubyboy::MMU.new []
   end

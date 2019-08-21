@@ -1,4 +1,4 @@
-describe Rubyboy::Instructions::Registers do
+describe Rubyboy::Instructions::Load do
   before(:each) do
     @mmu = Rubyboy::MMU.new []
   end
