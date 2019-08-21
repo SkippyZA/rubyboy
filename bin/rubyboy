@@ -9,4 +9,6 @@ if rom.nil?
   exit
 end
 
-Rubyboy::Emulator.run(rom)
+emu = Rubyboy::Emulator.new rom
+
+emu.run
