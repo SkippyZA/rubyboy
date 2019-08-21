@@ -8,6 +8,11 @@ module Rubyboy
       @cartridge = Cartridge.new rom
       @mmu = MMU.new rom
       @cpu = CPU.new @mmu
+
+      5000.times do
+        @cpu.step
+      end
+
     end
   end
 end
