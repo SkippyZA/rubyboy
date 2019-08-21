@@ -21,7 +21,11 @@ module Rubyboy
     end
 
     def [](address)
-      @memory[address]
+      if address <= 0x7FFF || ( address >= 0xA000 && address <= 0xBFFF )
+        @cartridge[address]
+      else
+        @memory[address]
+      end
     end
 
     def []=(address, value)
