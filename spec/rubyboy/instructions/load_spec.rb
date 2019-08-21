@@ -19,7 +19,7 @@ describe Rubyboy::Instructions::Load do
 
     describe 'load_n_hl' do
       it 'puts memory from location n into HL' do
-        subject.hl = 0xAA10
+        subject.hl = 0xC010
         @mmu.write_short(subject.hl, 0xAF)
 
         subject.load_n_hl(:b)
@@ -30,7 +30,7 @@ describe Rubyboy::Instructions::Load do
 
     describe 'load_hl_n' do
       it 'puts the value at memory location in HL to register' do
-        n = 0xAA10
+        n = 0xC010
 
         subject.hl = n
         subject.set_register(:b, 0xAF)
