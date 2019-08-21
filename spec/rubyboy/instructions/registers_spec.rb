@@ -1,8 +1,5 @@
 describe Rubyboy::Instructions::Registers do
-  before(:each) do
-    @mmu = Rubyboy::MMU.new []
-  end
-
+  before(:each) { @mmu = Rubyboy::MMU.new [] }
   subject { Rubyboy::CPU.new @mmu }
 
   describe 'when reading 16 bit registers' do

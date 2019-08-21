@@ -1,8 +1,5 @@
 describe Rubyboy::Instructions::Load do
-  before(:each) do
-    @mmu = Rubyboy::MMU.new []
-  end
-
+  before(:each) { @mmu = Rubyboy::MMU.new [] }
   subject { Rubyboy::CPU.new @mmu }
 
   describe '8 bit load instructions' do
@@ -49,6 +46,19 @@ describe Rubyboy::Instructions::Load do
         subject.load_r1_r2(:a, :b)
 
         expect(subject.a).to eq 0x22
+      end
+    end
+  end
+
+  [:a, :b, :c, :d, :e, :h, :l].each do |i|
+    [:a, :b, :c, :d, :e, :h, :l].each do |v|
+      method = "ld_#{i}_#{v}"
+      describe "##{method}" do
+        before { subject.set_register(v, 0xAF) }
+        it "loads value #{v.upcase} register into #{i.upcase} register" do
+          subject.public_send method
+          expect(subject.public_send(i)).to eq 0xAF
+        end
       end
     end
   end
