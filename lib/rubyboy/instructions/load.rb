@@ -10,11 +10,6 @@ module Rubyboy
         @pc += 1
       end
 
-      def load_r1_r2(register1, register2)
-        value = instance_variable_get "@#{register2}"
-        set_register register1, value
-      end
-
       def load_n_hl(n)
         value = @mmu.read_short self.hl
         set_register n, value
@@ -23,6 +18,11 @@ module Rubyboy
       def load_hl_n(n)
         value = get_register n
         @mmu.write_short self.hl, value
+      end
+
+      def load_r1_r2(register1, register2)
+        value = instance_variable_get "@#{register2}"
+        set_register register1, value
       end
     end
   end

@@ -1,5 +1,9 @@
 describe Rubyboy::CPU do
-  subject { Rubyboy::CPU.new }
+  before(:each) do
+    @mmu = Rubyboy::MMU.new []
+  end
+
+  subject { Rubyboy::CPU.new @mmu }
 
   describe 'when reading 16 bit registers' do
     it 'pairs the A, F registers to form a AF' do
