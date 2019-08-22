@@ -1,6 +1,8 @@
 module Rubyboy
   module Instructions
     module Registers
+      PAIRED_REGISTERS = [ :bc, :de, :hl, :af ]
+
       # af
       def af
         (@a << 8) | @f
@@ -75,18 +77,18 @@ module Rubyboy
       end
 
       def get_register (register)
-        if instance_variable_defined? "@#{register}"
-          instance_variable_get "@#{register.to_sym}"
-        elsif self.respond_to? "#{register}"
+        if PAIRED_REGISTERS.include? register
           self.send "#{register}"
+        else
+          instance_variable_get "@#{register.to_sym}"
         end
       end
 
       def set_register (register, value)
-        if instance_variable_defined? "@#{register}"
-          instance_variable_set "@#{register.to_sym}", value
-        elsif self.respond_to? "#{register}="
+        if PAIRED_REGISTERS.include? register
           self.send "#{register}=", value
+        else
+          instance_variable_set "@#{register.to_sym}", value
         end
       end
     end
