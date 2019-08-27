@@ -6,12 +6,12 @@ module Rubyboy
       rom = IO.binread(rom_path).bytes
 
       @cartridge = Cartridge.new rom
-      @mmu = MMU.new rom
+      @mmu = MMU.new @cartridge
       @cpu = CPU.new @mmu
     end
 
     def run
-      5000.times do
+      30.times do
         @cpu.step
       end
     end

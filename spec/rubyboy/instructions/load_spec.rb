@@ -47,32 +47,4 @@ describe Rubyboy::Instructions::Load do
       expect(subject.a).to eq 0x22
     end
   end
-
-  # LD n,(HL)
-  [:a, :b, :c, :d, :e].each do |i|
-    method = "ld_#{i}_hl"
-    describe "##{method}" do
-      before { subject.set_register :hl, 0xC010 }
-      before { @mmu.write_short 0xC010, 0x50 }
-
-      it "loads value at (HL) into #{i.upcase} register" do
-        subject.public_send method
-        expect(subject.public_send(i)).to eq 0x50
-      end
-    end
-  end
-
-  # LD n,n
-  [:a, :b, :c, :d, :e, :h, :l].each do |i|
-    [:a, :b, :c, :d, :e, :h, :l].each do |v|
-      method = "ld_#{i}_#{v}"
-      describe "##{method}" do
-        before { subject.set_register(v, 0xAF) }
-        it "loads value #{v.upcase} register into #{i.upcase} register" do
-          subject.public_send method
-          expect(subject.public_send(i)).to eq 0xAF
-        end
-      end
-    end
-  end
 end
