@@ -120,15 +120,11 @@ module Rubyboy
     end
 
     def jpc (flag, address)
-      if (@f & flag == flag)
-        @pc = address
-      end
+      @pc = address if @f & flag == flag
     end
 
     def jpnc (flag, address)
-      if (@f & flag == 0x00)
-        @pc = address
-      end
+      @pc = address if @f & flag == 0x00
     end
 
     def xor (value)
@@ -139,6 +135,16 @@ module Rubyboy
       @a = (@a ^ value) & 0xFF
 
       @a == 0x00 ? set_z_flag : reset_z_flag
+    end
+
+    def dec_n (register)
+      value = get_register(register) - 1
+
+      value & 0xFF == 0x00 ? set_z_flag : reset_z_flag
+      value & 0x0F == 0x0F ? set_h_flag : reset_h_flag
+      set_n_flag
+
+      set_register(register, value & 0xFF)
     end
   end
 end
