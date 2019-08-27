@@ -86,7 +86,7 @@ module Rubyboy
       value = read_argument operation
       formatted_disassembly = operation.disassembly % value
 
-      puts 'Program Counter: 0x%04X, Instruction: 0x%02X, Operation: %s' % [ pc, instruction, formatted_disassembly ] unless operation.execute.nil?
+      puts 'Program Counter: 0x%04X, Instruction: 0x%02X, Operation: %s' % [ pc, instruction, formatted_disassembly ] # unless operation.execute.nil?
 
       unless operation.execute.nil?
         operation.execute.call(self)
@@ -119,13 +119,26 @@ module Rubyboy
       @pc = address
     end
 
-    def jp_nn
-      address = @mmu.read_word @pc
-      @pc = address
+    def jpc (flag, address)
+      if (@f & flag == flag)
+        @pc = address
+      end
     end
 
-    def jp_hl
-      @pc = hl
+    def jpnc (flag, address)
+      if (@f & flag == 0x00)
+        @pc = address
+      end
+    end
+
+    def xor (value)
+      reset_n_flag
+      reset_h_flag
+      reset_c_flag
+
+      @a = (@a ^ value) & 0xFF
+
+      @a == 0x00 ? set_z_flag : reset_z_flag
     end
   end
 end

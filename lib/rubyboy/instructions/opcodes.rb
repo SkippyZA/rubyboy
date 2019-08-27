@@ -19,17 +19,17 @@ module Rubyboy
         end
       end
 
-      test = ->(op) { puts "----------------------------------------------------------------------------------------------------------------------------------------------------- #{op.class} -------------------------------------------------------------------------------------------------------------------------------------------------------"; op }
+      mark = ->(cpu) { puts "--------------------------------------------------------------------------------"; cpu }
 
       OPCODE = [
         # 0x00
         [ 'NOP', 0, 4, ->(cpu) { cpu.nop } ],
         [ 'LD BC, 0x%04X', 2, 12 ],
         [ 'LD (BC), A', 0, 8 ],
-        [ 'INC BC', 0, 8, ->(cpu) { puts "HELLOHELLOHELLOHELLOHELLOHELLOHELLO" } ],
+        [ 'INC BC', 0, 8 ],
         [ 'INC B', 0, 4 ],
         [ 'DEC B', 0, 4 ],
-        [ 'LD B, 0x%02X', 1, 8, test >> ->(cpu) { cpu.load_nn_n :b } ],
+        [ 'LD B, 0x%02X', 1, 8, ->(cpu) { cpu.load_nn_n :b } ],
         [ 'RLCA', 0, 4 ],
         [ 'LD (0x%04X), SP', 2, 20 ],
         [ 'ADD HL, BC', 0, 8 ],
@@ -212,14 +212,14 @@ module Rubyboy
         [ 'AND L', 0, 4 ],
         [ 'AND (HL)', 0, 8 ],
         [ 'AND A', 0, 4 ],
-        [ 'XOR B', 0, 4 ],
-        [ 'XOR C', 0, 4 ],
-        [ 'XOR D', 0, 4 ],
-        [ 'XOR E', 0, 4 ],
-        [ 'XOR H', 0, 4 ],
-        [ 'XOR L', 0, 4 ],
-        [ 'XOR (HL)', 0, 8 ],
-        [ 'XOR A', 0, 4 ],
+        [ 'XOR B', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:b) } ],
+        [ 'XOR C', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:c) } ],
+        [ 'XOR D', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:d) } ],
+        [ 'XOR E', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:e) } ],
+        [ 'XOR H', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:h) } ],
+        [ 'XOR L', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:l) } ],
+        [ 'XOR (HL)', 0, 8, ->(cpu) { cpu.xor cpu.get_register(cpu.mmu.read_word(cpu.get_register(:hl))) } ],
+        [ 'XOR A', 0, 4, ->(cpu) { cpu.xor cpu.get_register(:a) } ],
 
         # 0xB0
         [ 'OR B', 0, 4 ],
@@ -242,7 +242,7 @@ module Rubyboy
         # 0xC0
         [ 'RET NZ', 0, [ 8, 20 ] ],
         [ 'POP BC', 0, 12 ],
-        [ 'JP NZ, 0x%04X', 2, [ 8, 16 ] ],
+        [ 'JP NZ, 0x%04X', 2, [ 8, 16 ], ->(cpu) { cpu.jpnc Z_FLAG, cpu.mmu.read_word(cpu.pc) }],
         [ 'JP 0x%04X', 2, 16, ->(cpu) { cpu.jp cpu.mmu.read_word(cpu.pc) } ],
         [ 'CALL NZ, 0x%04X', 2, [ 8, 24 ] ],
         [ 'PUSH BC', 0, 16 ],
@@ -250,7 +250,7 @@ module Rubyboy
         [ 'RST 0x00', 0, 16 ],
         [ 'RET Z', 0, [ 8, 20 ] ],
         [ 'RET', 0, 16 ],
-        [ 'JP Z, 0x%04X', 2, [ 8, 16 ] ],
+        [ 'JP Z, 0x%04X', 2, [ 8, 16 ], ->(cpu) { cpu.jpc(Z_FLAG, cpu.mmu.read_word(cpu.pc)) } ],
         [ 'CB %02X', 1, 4 ],
         [ 'CALL Z, 0x%04X', 2, [ 8, 24 ] ],
         [ 'CALL 0x%04X', 2, 24 ],
@@ -260,7 +260,7 @@ module Rubyboy
         # 0xD0
         [ 'RET NC', 0, [ 8, 20 ] ],
         [ 'POP DE', 0, 12 ],
-        [ 'JP NC, 0x%04X', 2, [ 12, 16 ] ],
+        [ 'JP NC, 0x%04X', 2, [ 12, 16 ], ->(cpu) { cpu.jpnc(C_FLAG, cpu.mmu.read_word(cpu.pc)) } ],
         [ 'UNKNOWN', 0, 0 ],
         [ 'CALL NC, 0x%04X', 2, [ 12, 24 ] ],
         [ 'PUSH DE', 0, 16 ],
@@ -268,7 +268,7 @@ module Rubyboy
         [ 'RST 0x10', 0, 16 ],
         [ 'RET C', 0, [ 20, 8 ] ],
         [ 'RETI', 0, 16 ],
-        [ 'JP C, 0x%04X', 2, [ 12, 16 ] ],
+        [ 'JP C, 0x%04X', 2, [ 12, 16 ], ->(cpu) { cpu.jpc(C_FLAG, cpu.mmu.read_word(cpu.pc)) } ],
         [ 'UNKNOWN', 0, 0 ],
         [ 'CALL C, 0x%04X', 2, [ 12, 24 ] ],
         [ 'UNKNOWN', 0 ],
@@ -290,7 +290,7 @@ module Rubyboy
         [ 'UNKNOWN', 0, 0 ],
         [ 'UNKNOWN', 0, 0 ],
         [ 'UNKNOWN', 0, 0 ],
-        [ 'XOR 0x%02X', 1, 8 ],
+        [ 'XOR 0x%02X', 1, 8, ->(cpu) { cpu.xor cpu.mmu.read_short(cpu.pc) } ],
         [ 'RST 0x28', 0, 16 ],
 
         # 0xF0
